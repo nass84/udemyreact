@@ -136,6 +136,7 @@ Delete events use filter method to check if ID is the same
  console.log(id)
   };
 ```
+
 However this is bad practice due to the timing of the event. If state depends on previous state you should use a call back function
 
 ```
@@ -147,74 +148,77 @@ However this is bad practice due to the timing of the event. If state depends on
     });
     console.log(id);
   };
-  
-  ```
-  # Conditional Templates
 
-  To show and hide something you can use the logical && to only show something if it is true
+```
 
-  ```
-  function App() {
-  const [showEvents, setShowEvents] = useState(true);
+# Conditional Templates
 
-  const [events, setEvents] = useState([
-    { title: "marios birthday bash", id: 1 },
-    { title: "bower's live stream", id: 2 },
-    { title: "race on moo moo farm", id: 3 },
-  ]);
+To show and hide something you can use the logical && to only show something if it is true
 
-  const handleClick = (id) => {
-    setEvents((prevEvents) => {
-      return prevEvents.filter((event) => {
-        return id !== event.id;
-      });
+```
+function App() {
+const [showEvents, setShowEvents] = useState(true);
+
+const [events, setEvents] = useState([
+  { title: "marios birthday bash", id: 1 },
+  { title: "bower's live stream", id: 2 },
+  { title: "race on moo moo farm", id: 3 },
+]);
+
+const handleClick = (id) => {
+  setEvents((prevEvents) => {
+    return prevEvents.filter((event) => {
+      return id !== event.id;
     });
-    console.log(id);
-  };
+  });
+  console.log(id);
+};
 
-  return (
-    <div className="App">
-      {showEvents && (
-        <div>
-          <button onClick={() => setShowEvents(false)}>hide events</button>
+return (
+  <div className="App">
+    {showEvents && (
+      <div>
+        <button onClick={() => setShowEvents(false)}>hide events</button>
+      </div>
+    )}
+    {!showEvents && (
+      <div>
+        <button onClick={() => setShowEvents(true)}>show events</button>
+      </div>
+    )}
+    {showEvents &&
+      events.map((event, index) => (
+        <div key={event.id}>
+          <h2>
+            {" "}
+            {index + 1} - {event.title}
+          </h2>
+          <button
+            onClick={() => {
+              handleClick(event.id);
+            }}
+          >
+            Delete Event{" "}
+          </button>
         </div>
-      )}
-      {!showEvents && (
-        <div>
-          <button onClick={() => setShowEvents(true)}>show events</button>
-        </div>
-      )}
-      {showEvents &&
-        events.map((event, index) => (
-          <div key={event.id}>
-            <h2>
-              {" "}
-              {index + 1} - {event.title}
-            </h2>
-            <button
-              onClick={() => {
-                handleClick(event.id);
-              }}
-            >
-              Delete Event{" "}
-            </button>
-          </div>
-        ))}
-    </div>
-  );
+      ))}
+  </div>
+);
 }
 ```
+
 # Props
 
 To pass data from parent component to a child component
-This allows you to reuse the component and pass different data to it. Making components reusable 
+This allows you to reuse the component and pass different data to it. Making components reusable
 
-You make an attribute in the custom component in the parent component 
+You make an attribute in the custom component in the parent component
+
 ```
      <Title title="Events In Your Area!" />
 ```
 
-In the child component, it automatically receives a props object and now title has been added it to it. 
+In the child component, it automatically receives a props object and now title has been added it to it.
 
 ```
 export default function Title (props) {
@@ -222,7 +226,7 @@ export default function Title (props) {
     <div>
       <h1 className="title"> {props.title}</h1>
       <br />
-     <h2 className="subtitle"> All the latest events in the Mario Kingdom</h2>  
+     <h2 className="subtitle"> All the latest events in the Mario Kingdom</h2>
     </div>
   )
 
@@ -231,7 +235,7 @@ export default function Title (props) {
 
 ## Multiple Props
 
-You can add multiple props including variables 
+You can add multiple props including variables
 
 ```
  const subtitle = "this is a subtitle";
@@ -241,16 +245,17 @@ You can add multiple props including variables
       <Title title ="Events In Your Area!" subtitle={subtitle} />
 
 ```
+
 ```
   <h1 className="title"> {props.title}</h1>
       <br />
-     <h2 className="subtitle"> {props.subtitle}</h2>  
+     <h2 className="subtitle"> {props.subtitle}</h2>
 
 ```
 
-## Destructuring 
+## Destructuring
 
-To save having to write props. everytime you can destructure the information by using { name of prop } inside () 
+To save having to write props. everytime you can destructure the information by using { name of prop } inside ()
 
 ```
 export default function Title ({title, subtitle}) {
@@ -258,12 +263,64 @@ export default function Title ({title, subtitle}) {
     <div>
       <h1 className="title"> {title}</h1>
       <br />
-     <h2 className="subtitle"> {subtitle}</h2>  
+     <h2 className="subtitle"> {subtitle}</h2>
     </div>
   )
 
 }
 ```
 
+## React Fragments
 
+Your component must have a parent element such as a div. However as these serve no purpose in the html outputted instead of using divs you can you empty <> </>
+
+Can not create an empty fragment if you are using props. You have to use React.Fragment
+
+```
+<React.Fragment key={event.id}>
+  <h2> {event.title} </h2>
+</React.Fragment>
+```
+
+## Snippets
+
+\_RFC tab will make a React componet template for you
+
+## Children Props
+
+To make a component even more reusable you can pass the children prop to your component and that way you can change the structure of it.
+You have to use opening and closing tags and put the JSX inside them
+
+```
+  <Modal>
+    <h2> 10% Off Coupon Code!!</h2>
+    <a href="https://www.google.com">click here to get your coupon</a>
+  </Modal>
+
+    <Modal>
+    <h1> Another Example </h1>
+    <p>This will look different but keep same styles</p>
+  </Modal>
+
+```
+
+Then in the child component destructure children or write props.children
+
+```
+export default function Modal({ children }) {
+  return (
+    <div className="modal-backdrop">
+      <div className="modal">{children}</div>
+    </div>
+  );
+}
+
+```
+## Custom CSS
+
+You can make a CSS file for your component by adding .css after the file name and then importing it 
+
+```
+import "./Modal.css";
+```
 
