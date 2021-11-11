@@ -324,3 +324,48 @@ You can make a CSS file for your component by adding .css after the file name an
 import "./Modal.css";
 ```
 
+## Passing Functions as Props 
+
+Set State at the top
+
+```
+  const [showModal, setShowModal] = useState(true);
+```
+
+Make function 
+
+```
+  const handleClose = () => {
+    setShowModal(false);
+  };
+```
+
+Pass function name in as prop
+
+```
+ {showModal && (
+        <Modal handleClose={handleClose}>
+          <h2> 10% Off Coupon Code!!</h2>
+          <a href="https://www.google.com">click here to get your coupon</a>
+        </Modal>
+      )}
+
+```
+
+In component destructure name of function and add to component
+
+```
+export default function Modal({ children, handleClose }) {
+  return (
+    <div className="modal-backdrop">
+      <div className="modal">
+        {children}
+        <br></br>
+        <button className="modal-close" onClick={handleClose}>
+          close
+        </button>
+      </div>
+    </div>
+  );
+}
+```

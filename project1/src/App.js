@@ -4,6 +4,7 @@ import Title from "./components/Title";
 import Modal from "./components/Modal";
 
 function App() {
+  const [showModal, setShowModal] = useState(true);
   const [showEvents, setShowEvents] = useState(true);
 
   const [events, setEvents] = useState([
@@ -22,6 +23,10 @@ function App() {
   };
 
   const subtitle = "this is a subtitle";
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
 
   return (
     <div className="App">
@@ -52,12 +57,12 @@ function App() {
             </button>
           </React.Fragment>
         ))}
-      <Modal>
-        <h2> 10% Off Coupon Code!!</h2>
-        <a href="https://www.google.com">click here to get your coupon</a>
-      </Modal>
-
-    
+      {showModal && (
+        <Modal handleClose={handleClose}>
+          <h2> 10% Off Coupon Code!!</h2>
+          <a href="https://www.google.com">click here to get your coupon</a>
+        </Modal>
+      )}
     </div>
   );
 }
