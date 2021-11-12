@@ -316,15 +316,16 @@ export default function Modal({ children }) {
 }
 
 ```
+
 ## Custom CSS
 
-You can make a CSS file for your component by adding .css after the file name and then importing it 
+You can make a CSS file for your component by adding .css after the file name and then importing it
 
 ```
 import "./Modal.css";
 ```
 
-## Passing Functions as Props 
+## Passing Functions as Props
 
 Set State at the top
 
@@ -332,7 +333,7 @@ Set State at the top
   const [showModal, setShowModal] = useState(true);
 ```
 
-Make function 
+Make function
 
 ```
   const handleClose = () => {
@@ -369,3 +370,239 @@ export default function Modal({ children, handleClose }) {
   );
 }
 ```
+
+# Create Form
+
+To create a basic form you can use
+
+```
+import "./NewEventForm.css";
+
+export default function NewEventForm() {
+  return (
+    <form className="new-event-form">
+      <label>
+        <span>Event Title</span>
+        <input type="text" />
+      </label>
+      <label>
+        <span>Event Date</span>
+        <input type="date" />
+      </label>
+      <button>Submit</button>
+    </form>
+  );
+}
+```
+
+## Tracking changes - onChange event 
+
+You can use the onChange event
+
+To log changes to the console you can use
+
+```
+const handleChange = (e) => {
+  console.log(e.target.value);
+};
+```
+
+```
+<input type="text" onChange={handleChange} />
+
+To store the value you can set state to empty value and use a handleChange function
+
+```
+     <input type="text" onChange={handleChange} />
+
+```
+
+```
+
+const handleChange = (e) => {
+setTitle(e.target.value);
+};
+
+```
+
+or do an inline function
+
+```
+
+        <input type="date" onChange={(e) => setDate(e.target.value)} />
+
+```
+
+```
+# Reset the Form 
+
+You can set the state to "" by using a onClick function however the value will remain unless you set the value to the name of the state
+```
+value={date}
+```
+
+```
+import "./NewEventForm.css";
+import React, { useState } from "react";
+
+export default function NewEventForm() {
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
+
+  const handleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const resetForm = () => {
+  setTitle("");
+  setDate("");
+  }
+  return (
+    <form className="new-event-form">
+      <label>
+        <span>Event Title</span>
+        <input type="text" 
+        onChange={handleChange} 
+        value={title}
+        />
+      </label>
+      <label>
+        <span>Event Date</span>
+        <input 
+        type="date" 
+        onChange={(e) => setDate(e.target.value)}
+        value={date}
+        />
+      </label>
+      <button>Submit</button>
+      <p> Title - {title}, date - {date} </p>
+      <p onClick={resetForm}>Reset</p> 
+    </form>
+  );
+}
+```
+
+# Submit the data 
+
+Add a onSubmit event to the form 
+
+```
+  <form className="new-event-form" onSubmit={handleSubmit}>
+```
+
+Then make a function that 
+
+- Prevent the default behaviour of submitting the form
+- Create a new event object with random id to use as the key
+- Log to console 
+- Reset the form
+
+```
+ const handleSubmit = (e) => {
+   e.preventDefault();
+    
+    const event = {
+      title: title,
+      date: date,
+      id: Math.floor(Math.random() * 100000),
+    };
+    console.log(event);
+    resetForm();
+  };
+```
+# Update state in App to show new events
+
+- Delete hardcoded events in App 
+- set state to empty object
+- take in the event, spread over the previous events and add new event
+- close the Modal by setting show to false
+
+```
+const [events, setEvents] = useState([]);
+
+  const addEvent = (event) => {
+    setEvents((prevEvents) => {
+    return [...prevEvents, event]
+    })
+    setShowModal(false);
+  }
+```
+
+- pass function in as a prop
+
+```
+  <NewEventForm addEvent={addEvent}/>
+```
+- add prop to component
+```
+export default function NewEventForm({addEvent})
+```
+and add to submit function 
+```
+  const handleSubmit = (e) => {
+    
+    e.preventDefault();
+    const event = {
+      title: title,
+      date: date,
+      id: Math.floor(Math.random() * 100000),
+    };
+    console.log(event);
+    addEvent(event);
+    resetForm();
+  };
+```
+
+# useRef
+
+Refs are a way to get a reference to a raw dom element like  query selector in vanilla JS
+
+Use a react hook called useRef
+
+Typically you would use state way of controlled inputs but this is an alternative
+
+```
+import "./NewEventForm.css";
+import React, {  useRef } from "react";
+
+export default function NewEventForm({ addEvent }) {
+  
+  const title = useRef();
+  const date = useRef();
+
+  const resetForm = () => {
+    title.current.value = "";
+    date.current.value = "";
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(date, title);
+
+    const event = {
+      title: title.current.value,
+      date: date.current.value,
+      id: Math.floor(Math.random() * 100000),
+    };
+    console.log(event);
+    addEvent(event);
+    resetForm();
+  };
+
+  return (
+    <form className="new-event-form" onSubmit={handleSubmit}>
+      <label>
+        <span>Event Title</span>
+        <input type="text" ref={title} />
+      </label>
+      <label>
+        <span>Event Date</span>
+        <input type="date" ref={date} />
+      </label>
+      <button>Submit</button>
+    </form>
+  );
+}
+```
+
+
